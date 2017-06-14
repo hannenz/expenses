@@ -1,0 +1,134 @@
+form {
+	@extend .card;
+	max-width:32rem;
+	margin:0 auto;
+	padding:1.5rem;
+	position:relative;
+}
+
+fieldset {
+	border:0;
+	padding:1.5rem;
+}
+
+label {
+	display:block;
+	color:$light-text-color;
+}
+
+input, textarea {
+	font-family:'Lato', sans-serif;
+	width:100%;
+	max-width:100%;
+	border:0;
+	border-bottom:1px solid gainsboro;
+	display:block;
+	font-size:1.5rem;
+
+	&:focus {
+		outline:0;
+		// border:0;
+		// border-bottom:1px solid $primary-color;
+	}
+
+	// Hide spin buttons (moz and webkit)
+	-moz-appearance:textfield;
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance:none;
+		margin:0;
+	}
+}
+
+textarea {
+	max-height:1.5em;
+}
+
+#value {
+	color:#101010;
+	font-size:4rem;
+	font-weight:800;
+	text-align:right;
+	transition:200ms;
+
+	&:focus {
+		text-align:left;
+	}
+
+	&:invalid {
+		border-color:#c00000;
+		color:#c00000;
+		background-color:rgba(200, 0, 0, 0.2);
+	}
+}
+
+
+form  .input {
+	display:flex;
+	flex-direction:column;
+	margin-bottom:1.5rem;
+
+	label {
+		order:2;
+	}
+	input, textarea, select {
+		order:1;
+	}
+}
+
+select {
+	appearance:none;
+	background-color:transparent;
+	border:0;
+	border-bottom:1px solid $light-text-color;
+	font-size:1.5rem;
+	&:focus {
+		outline:0;
+	}
+}
+
+
+.input.date {
+
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+	flex-wrap:wrap;
+	label {
+		flex:1 0 100%;	
+	}
+
+	select {
+		flex:0 0 auto;
+		width:30%;
+	}
+}
+
+.close-button {
+	position:absolute;
+	top:1rem;
+	right:1rem;
+	color:$text-color;
+	text-decoration:none;
+	text-shadow:1px 1px 1px #fff;
+}
+
+button[type="submit"] {
+	background-color:$primary-color;
+	border:0;
+	border-radius:50%;
+	width:64px;
+	height:64px;
+	color:#fff;
+	margin:0 auto;
+	display:block;
+	font-size:2em;
+}
+
+.error-message {
+	background-color:#c00000;
+	color:#fff;
+	padding:2px;
+	font-size:0.8125em;
+}

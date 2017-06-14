@@ -1,0 +1,11 @@
+.git*
+tmp/*
+Makefile
+watchmake.sh
+config/app.php
+src/css
+src/js
+src/svg
+src/icons
+src/img
+src/fonts

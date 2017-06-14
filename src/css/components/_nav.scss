@@ -1,0 +1,15 @@
+nav ul {
+	display:flex;
+	list-style:none;
+	justify-content:space-between;
+	width:100%;
+	max-width:40rem;
+	margin:1.5rem 0;
+
+	 a {
+		 display:block;
+		 text-decoration:none;
+		 color:$primary-color;
+	}
+
+}
