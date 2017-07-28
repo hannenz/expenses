@@ -23,13 +23,32 @@ function init() {
 	}
 
 	function onBlur(e) {
-		var v = parseFloat(inp.value.replace(/\,/, '.')),
-		s = v.toFixed(2);
-		inp.value = !isNaN(s) ? s : '0,00';
-		// onKeyUp();
+
+		var 
+			v = parseFloat(inp.value),
+			s = v.toFixed(2);
+
+		inp.value = s;
 	}
 
 	function onInvalid(e) {
 		onBlur();
 	}
+
+	// Date picker
+	var dateInput = document.getElementById('date');
+	var picker = new Pikaday({ 
+		field: dateInput,
+		firstDay: 1,
+		format: 'D MMM YYYY',
+		i18n: {
+			previousMonth: 'Vorheriger Monat',
+			nextMonth: 'Nächster Monat',
+			months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',  'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+			weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+			weekdaysShort: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+		}
+	});
 };
+
+

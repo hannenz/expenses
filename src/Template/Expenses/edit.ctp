@@ -28,7 +28,7 @@
             echo $this->Form->control('description');
             echo $this->Form->control('user_id', ['options' => $users]);
             echo $this->Form->control('category_id', ['options' => $categories]);
-			echo $this->MyForm->control('date', ['type' => 'date']);
+			echo $this->Form->control('date', ['type' => 'text']);
             echo $this->Form->control('remark');
         ?>
     </fieldset>

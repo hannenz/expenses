@@ -16,7 +16,8 @@ label {
 	color:$light-text-color;
 }
 
-input, textarea {
+#{$all-text-inputs} {
+// input, textarea {
 	font-family:'Lato', sans-serif;
 	width:100%;
 	max-width:100%;
@@ -39,6 +40,7 @@ input, textarea {
 		-webkit-appearance:none;
 		margin:0;
 	}
+
 }
 
 textarea {

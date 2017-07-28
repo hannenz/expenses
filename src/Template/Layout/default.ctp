@@ -8,8 +8,17 @@
     </title>
     <?= $this->Html->meta('icon') ?>
 
-    <?= $this->Html->css('main.css') ?>
-	<?= $this->Html->script('main.min.js'); ?>
+	<?php
+	echo $this->Html->css([
+		'main.css',
+		'/js/vendor/node_modules/pikaday/css/pikaday.css'
+	]);
+	echo $this->Html->script([
+		'main.min.js',
+		'vendor/node_modules/moment/moment.js',
+		'vendor/node_modules/pikaday/pikaday.js'
+	]);
+	?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

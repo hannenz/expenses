@@ -7,7 +7,7 @@ setlocale(LC_ALL, 'de_DE.utf8');
 
 
 <div class="expenses index">
-    <h3><?= strftime('%B %Y'); ?></h3>
+    <h3><?= strftime('%B %Y', strtotime(sprintf('%04u-%02u-01', $year, $month))); ?></h3>
 
 	<div style="display:flex">
 		<?php foreach ($byCategory as $cat):?>
@@ -29,12 +29,13 @@ setlocale(LC_ALL, 'de_DE.utf8');
 
 		<title>Bar Chart of the current month's expenses</title>
 		<?php $i = 0; foreach ($byCategory as $cat):?>
+			<?php if ($cat->category->parent_id != 1) continue; ?>
 			<?php
 				$w = $cat->sum / $sum * 500; 
 				$y = $i++ * 25;
 			?>
 			<g class="bar">
-				<rect x="0"					y="<?=$y;?>" width="<?php printf("%.2F", $w); ?>" height="20" fill="salmon">
+				<rect x="0" y="<?=$y;?>" width="<?php printf("%.2F", $w); ?>" height="20" fill="salmon">
 					<animate attributeName="width" from="0" to="<?php printf("%.2F", $w); ?>" dur="1s"  repeatCount="1" />
 				</rect>
 				<text id="bar-text-<?=$i; ?>" style="fill:#838284;font-size:12px;opacity:0" x="<?php printf("%.2F", $w + 5); ?>"	y="<?=$y + 14;?>"><?=$cat->category->name; ?> (<?=$this->Number->currency($cat->sum, 'EUR');?>)</text>

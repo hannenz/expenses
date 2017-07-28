@@ -13,14 +13,17 @@ use App\View\Helper\MyFormHelper;
 		echo $this->Form->create($expense, ['novalidate' => true]);
 	?>
 	<a class="close-button" href="/"> &times </a>
-    <fieldset>
+    <fieldset lang="en-US">
         <legend><?= __('Add Expense') ?></legend>
         <?php
-            echo $this->Form->control('value', ['step' => '0.01', 'required' => false]);
+			if (!empty($duplicate_detected)) {
+				echo $this->Form->control('override_duplicate', ['type' => 'checkbox', 'label' => __('It\'s not a duplicate')]);
+			}
+            echo $this->Form->control('value', ['type' => 'text', 'step' => '0.01', 'required' => false]);
             echo $this->Form->control('description', ['type' => 'text', 'list' => 'descriptions']);
             echo $this->Form->control('user_id', ['options' => $users]);
             echo $this->Form->control('category_id', ['options' => $categories]);
-			echo $this->MyForm->control('date', ['type' => 'date']);
+			echo $this->MyForm->control('date', ['type' => 'text']);
             echo $this->Form->control('remark');
         ?>
 	<datalist id="descriptions">

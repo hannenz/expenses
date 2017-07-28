@@ -13,20 +13,37 @@ use App\Controller\AppController;
 class ExpensesController extends AppController
 {
 
+
     /**
      * Index method
      *
      * @return \Cake\Http\Response|null
      */
-    public function index()
-    {
+    public function index($month = null, $year = null) {
+
+		$this->year = ($year !== null) ? $year : (int)date('Y');
+		$this->month = ($month !== null) ? $month : (int)date('m');
+
         $this->paginate = [
 			'contain' => ['Users', 'Categories'],
 			'order' => ['date' => 'desc'],
 			'limit' => 32767,
-			'maxLimit' => 32767
+			'maxLimit' => 32767,
+			'where' => function($exp) {
+				return $exp->between('date', sprintf('%04u-%02u-01', $this->year, $this->month), sprintf('%04u-%02u-31', $this->year, $this->month));
+			}
         ];
         $expenses = $this->paginate($this->Expenses);
+
+		$query = $this->Expenses
+			->find()
+			->where(function($exp) {
+				return $exp->between('date', sprintf('%04u-%02u-01', $this->year, $this->month), sprintf('%04u-%02u-31', $this->year, $this->month)); 
+			})
+			->order(['date' => 'desc'])
+			->contain(['Users', 'Categories'])
+		;
+		$expenses = $query->all();
 
         $this->set(compact('expenses'));
         $this->set('_serialize', ['expenses']);
@@ -34,8 +51,12 @@ class ExpensesController extends AppController
 		$query = $this->Expenses->find();
 		$query->select(['sum' => $query->func()->sum('value')]);
 		$query->where(function($exp, $q) {
-			$month = $q->func()->month(['date' => 'identifier']);
-			return $exp->eq($month, (int)date('m'));
+			$year_month = $q->func()->date_format([
+				'date' => 'identifier',
+				"'%Y-%m'" => 'literal'
+			]);
+			return $exp->eq($year_month, sprintf('%04u-%02u', $this->year, $this->month));
+
 		});
 		$this->set('sum', $query->toArray()[0]->sum);
 
@@ -45,18 +66,25 @@ class ExpensesController extends AppController
 
 		$query->contain([
 			'Categories' => function($q) {
-				return $q->select([ 'Categories.name' ]);
+				return $q->select([ 'Categories.name', 'Categories.parent_id' ]);
 			}
 		]);
 
 		$query->where(function($exp, $q) {
-			$month = $q->func()->month(['date' => 'identifier']);
-			return $exp->eq($month, (int)date('m'));
+			$year_month = $q->func()->date_format([
+				'date' => 'identifier',
+				"'%Y-%m'" => 'literal'
+			]);
+			return $exp->eq($year_month, sprintf('%04u-%02u', $this->year, $this->month));
+			// $month = $q->func()->month(['date' => 'identifier']);
+			// return $exp->eq($month, (int)date('m'));
 		});
 		$query->group(['category_id']);
 
 		//$expenses = $query->toArray();
 		$this->set('byCategory', $query->all());
+		$this->set('year', $this->year);
+		$this->set('month', $this->month);
 
     }
 
@@ -82,24 +110,43 @@ class ExpensesController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
-    {
+    public function add() {
+
         $expense = $this->Expenses->newEntity();
         if ($this->request->is('post')) {
             $expense = $this->Expenses->patchEntity($expense, $this->request->getData());
-            if ($this->Expenses->save($expense)) {
-                $this->Flash->success(__('The expense has been saved.'));
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The expense could not be saved. Please, try again.'));
+			// Should move somewhere else
+			$checkExpense = $this->Expenses->find('all', [
+				'conditions' => [
+					'date' => $expense->date,
+					'value' => $expense->value
+			]]);
+
+			$isDuplicate = ($checkExpense->count() >= 1);
+
+
+			if ($isDuplicate) {
+				$this->Flash->set(__('This expense seems to be a duplicate, please check!'));
+				$this->set('duplicate_detected', true);
+			}
+
+			if (!$isDuplicate || (isset($expense->override_duplicate) && $expense->override_duplicate == 1)) {
+			
+				if ($this->Expenses->save($expense)) {
+					$this->Flash->success(__('The expense has been saved.'));
+
+					return $this->redirect(['action' => 'index']);
+				}
+				$this->Flash->error(__('The expense could not be saved. Please, try again.'));
+			}
         }
         $users = $this->Expenses->Users->find('list', ['limit' => 200]);
         $categories = $this->Expenses->Categories->find('treelist', ['limit' => 200]);
-	$descriptions = $this->Expenses->find('list', [
-		'keyField' => 'id',
-		'valueField' => 'description'
-	]);
+		$descriptions = $this->Expenses->find('list', [
+			'keyField' => 'id',
+			'valueField' => 'description'
+		]);
         $this->set(compact('expense', 'users', 'categories', 'descriptions'));
         $this->set('_serialize', ['expense']);
     }
